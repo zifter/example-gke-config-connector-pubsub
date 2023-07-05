@@ -1,4 +1,4 @@
-FROM europe-central2-docker.pkg.dev/maintenance-internal-services/docker-registry/external-images/python:3.10.7-slim-buster
+FROM python:3.10.7-slim-buster
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
