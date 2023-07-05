@@ -61,6 +61,9 @@ def main():
   args = parser.parse_args()
 
   shutdown = ExitSignalHandler()
+  # Do To exit from process in order to make keep pod running
+  # It will make it possible to exec bash inside pod and debug
+  # For example, make http request to metadada
   while not shutdown.triggered:
     try:
       args.worker(shutdown)
