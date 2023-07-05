@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publisher
+  labels:
+    {{- include "example-pubsub-communication.labels" . | nindent 4 }}
+    example/role: publisher
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "example-pubsub-communication.selectorLabels" . | nindent 6 }}
+      example/role: publisher
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "example-pubsub-communication.selectorLabels" . | nindent 8 }}
+        example/role: publisher
+    spec:
+      serviceAccountName: publisher
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          args:
+            - python3
+            - main.py
+            - --publisher
+          env:
+            - name: GCP_PROJECT_ID
+              value: {{ toYaml .Values.gcpProjectID | quote }}
+            - name: GCP_PUBSUB_TOPIC
+              value: {{ toYaml .Values.pubsub.topic | quote }}
+            - name: GCP_PUBSUB_TOPIC_SUB
+              value: {{ toYaml .Values.pubsub.subscription | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

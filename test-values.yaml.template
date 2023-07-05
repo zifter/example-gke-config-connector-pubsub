@@ -1,0 +1,9 @@
+gcpProjectID:  # Fill ME
+image: 
+  repository: zifter/dummy-pubsub-worker
+  tag: v0.1
+pubsub:
+  topic: demo-pubsub
+  subscription: demo-pubsub-subscription-a
+nodeSelector:
+  iam.gke.io/gke-metadata-server-enabled: "true"
